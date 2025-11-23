@@ -19,6 +19,7 @@ typedef int (*fn_t)(int, int);
 /* Initialized global external declarations. */
 
 extern int fillcol;		/* Fill column                  */
+extern int wrapmargin;		/* Right margin for autowrap    */
 extern int kbdm[];		/* Holds kayboard macro data    */
 extern char pat[];		/* Search pattern               */
 extern char rpat[];		/* Replacement pattern          */

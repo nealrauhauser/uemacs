@@ -63,6 +63,7 @@ static char *envars[] = {
 #if SCROLLCODE
 	"scroll",		/* scroll enabled */
 #endif
+	"wrapmargin",		/* right margin for word wrap (0=disabled) */
 };
 
 /* And its preprocesor definitions. */
@@ -108,6 +109,7 @@ static char *envars[] = {
 #define EVOVERLAP	38
 #define EVSCROLLCOUNT	39
 #define EVSCROLL	40
+#define EVWRAPMARGIN	41
 
 enum function_type {
 	NILNAMIC = 0,

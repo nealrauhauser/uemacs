@@ -46,9 +46,9 @@ static struct video **pscreen;		/* Physical screen. */
 static int displaying = TRUE;
 #if UNIX
 #include <signal.h>
+#include <sys/ioctl.h>
 #endif
 #ifdef SIGWINCH
-#include <sys/ioctl.h>
 /* for window size changes */
 int chg_width, chg_height;
 #endif
@@ -1506,7 +1506,10 @@ void getscreensize(int *widthp, int *heightp)
 	struct winsize size;
 	*widthp = 0;
 	*heightp = 0;
-	if (ioctl(0, TIOCGWINSZ, &size) < 0)
+	/* Try stdout (fd 1) first, then stdin (fd 0), then stderr (fd 2) */
+	if (ioctl(1, TIOCGWINSZ, &size) < 0 &&
+	    ioctl(0, TIOCGWINSZ, &size) < 0 &&
+	    ioctl(2, TIOCGWINSZ, &size) < 0)
 		return;
 	*widthp = size.ws_col;
 	*heightp = size.ws_row;

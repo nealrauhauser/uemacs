@@ -488,11 +488,17 @@ int execute(int c, int f, int n)
 	 * If a space was typed, fill column is defined, the argument is non-
 	 * negative, wrap mode is enabled, and we are now past fill column,
 	 * and we are not read-only, perform word wrap.
+	 *
+	 * If wrapmargin is set, use terminal width minus margin as wrap point.
 	 */
-	if (c == ' ' && (curwp->w_bufp->b_mode & MDWRAP) && fillcol > 0 &&
-	    n >= 0 && getccol(FALSE) > fillcol &&
-	    (curwp->w_bufp->b_mode & MDVIEW) == FALSE)
-		execute(META | SPEC | 'W', FALSE, 1);
+	if (c == ' ' && (curwp->w_bufp->b_mode & MDWRAP) && n >= 0 &&
+	    (curwp->w_bufp->b_mode & MDVIEW) == FALSE) {
+		int wrapcol = fillcol;
+		if (wrapmargin > 0 && wrapmargin < term.t_ncol)
+			wrapcol = term.t_ncol - wrapmargin;
+		if (wrapcol > 0 && getccol(FALSE) > wrapcol)
+			execute(META | SPEC | 'W', FALSE, 1);
+	}
 
 #if	PKCODE
 	if ((c >= 0x20 && c <= 0x7E)	/* Self inserting.      */

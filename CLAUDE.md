@@ -154,3 +154,32 @@ UTF-8 handling in `utf8.c` and `utf8.h`:
 1. Define bit in `estruct.h` mode flags section (around line 477)
 2. Add name to `modename[]` and letter to `modecode[]` in `globals.c`
 3. Implement mode-specific behavior in `execute()` or command handlers
+
+**Adding an environment variable:**
+1. Add string to `envars[]` array in `evar.h`
+2. Add `#define EV<NAME>` constant in `evar.h`
+3. Add case in `gtenv()` in `eval.c` to return the value
+4. Add case in `svar()` in `eval.c` to set the value (if settable)
+5. Declare global variable in `edef.h` and define in `globals.c`
+
+## Recent Enhancements (2025)
+
+### Word Wrap for Command-Line Word Processing
+
+New features for using uEmacs as a terminal-based word processor:
+
+**New Command: `set-fill-window`**
+- Sets fill column to terminal width minus optional margin
+- Usage: `M-x set-fill-window` or `ESC n M-x set-fill-window`
+- Implementation: `random.c:setfillwindow()`
+
+**New Environment Variable: `$wrapmargin`**
+- When > 0, automatically wraps at `$curwidth - $wrapmargin`
+- Overrides `$fillcol` when set
+- Dynamically adjusts to terminal resizing
+- Set via: `set $wrapmargin 8`
+
+**Enhanced Auto-Wrap Logic** (`main.c:494`):
+- Now checks `$wrapmargin` first, falls back to `$fillcol`
+- Calculates wrap column as `term.t_ncol - wrapmargin` when margin is set
+- Enables proper word processing at terminal edge

@@ -4,6 +4,7 @@
 /* initialized global definitions */
 
 int fillcol = 72;		/* Current fill column          */
+int wrapmargin = 0;		/* Right margin for autowrap (0=off) */
 int kbdm[NKBDM];		/* Macro                        */
 char *execstr = NULL;		/* pointer to string to execute */
 char golabel[NPAT] = "";	/* current line to go to        */

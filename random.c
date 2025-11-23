@@ -26,6 +26,25 @@ int setfillcol(int f, int n)
 }
 
 /*
+ * Set fill column to terminal width minus margin.
+ * With no argument, uses margin of 0 (full width).
+ * With argument n, uses margin of n columns.
+ */
+int setfillwindow(int f, int n)
+{
+	int margin = f ? n : 0;
+
+	if (margin < 0 || margin >= term.t_ncol) {
+		mlwrite("(Invalid margin %d for width %d)", margin, term.t_ncol);
+		return FALSE;
+	}
+
+	fillcol = term.t_ncol - margin;
+	mlwrite("(Fill column set to window width %d)", fillcol);
+	return TRUE;
+}
+
+/*
  * Display the current position of the cursor, in origin 1 X-Y coordinates,
  * the character that is under the cursor (in hex), and the fraction of the
  * text that is before the cursor. The displayed column is not the current

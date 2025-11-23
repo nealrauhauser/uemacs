@@ -409,10 +409,17 @@ int fillpara(int f, int n)
 	int firstflag;	/* first word? (needs no space) */
 	struct line *eopline;	/* pointer to line just past EOP */
 	int dotflag;	/* was the last char a period?  */
+	int wrapcol;	/* effective wrap column */
 
 	if (curbp->b_mode & MDVIEW)	/* don't allow this command if      */
 		return rdonly();	/* we are in read only mode     */
-	if (fillcol == 0) {	/* no fill column set */
+
+	/* Determine effective fill column, respecting wrapmargin if set */
+	wrapcol = fillcol;
+	if (wrapmargin > 0 && wrapmargin < term.t_ncol)
+		wrapcol = term.t_ncol - wrapmargin;
+
+	if (wrapcol == 0) {	/* no fill column set */
 		mlwrite("No fill column set");
 		return FALSE;
 	}
@@ -460,7 +467,7 @@ int fillpara(int f, int n)
 			/* at a word break with a word waiting */
 			/* calculate tentitive new length with word added */
 			newlength = clength + 1 + wordlen;
-			if (newlength <= fillcol) {
+			if (newlength <= wrapcol) {
 				/* add word to current line */
 				if (!firstflag) {
 					linsert(1, ' ');	/* the space */
@@ -508,16 +515,23 @@ int justpara(int f, int n)
 	int firstflag;	/* first word? (needs no space) */
 	struct line *eopline;	/* pointer to line just past EOP */
 	int leftmarg;		/* left marginal */
+	int wrapcol;		/* effective wrap column */
 
 	if (curbp->b_mode & MDVIEW)	/* don't allow this command if      */
 		return rdonly();	/* we are in read only mode     */
-	if (fillcol == 0) {	/* no fill column set */
+
+	/* Determine effective fill column, respecting wrapmargin if set */
+	wrapcol = fillcol;
+	if (wrapmargin > 0 && wrapmargin < term.t_ncol)
+		wrapcol = term.t_ncol - wrapmargin;
+
+	if (wrapcol == 0) {	/* no fill column set */
 		mlwrite("No fill column set");
 		return FALSE;
 	}
 	justflag = TRUE;
 	leftmarg = curwp->w_doto;
-	if (leftmarg + 10 > fillcol) {
+	if (leftmarg + 10 > wrapcol) {
 		leftmarg = 0;
 		mlwrite("Column too narrow");
 		return FALSE;
@@ -565,7 +579,7 @@ int justpara(int f, int n)
 			/* at a word break with a word waiting */
 			/* calculate tentitive new length with word added */
 			newlength = clength + 1 + wordlen;
-			if (newlength <= fillcol) {
+			if (newlength <= wrapcol) {
 				/* add word to current line */
 				if (!firstflag) {
 					linsert(1, ' ');	/* the space */

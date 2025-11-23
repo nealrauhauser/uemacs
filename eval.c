@@ -320,6 +320,8 @@ char *gtenv(char *vname)
 	case EVSCROLL:
 		return ltos(0);
 #endif
+	case EVWRAPMARGIN:
+		return itoa(wrapmargin);
 	}
 	exit(-12);		/* again, we should never get here */
 }
@@ -671,6 +673,9 @@ int svar(struct variable_description *var, char *value)
 			if (!stol(value))
 				term.t_scroll = NULL;
 #endif
+			break;
+		case EVWRAPMARGIN:
+			wrapmargin = atoi(value);
 			break;
 		}
 		break;
